@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+#MISE description="Fetches GitHub contributions based on config.toml"
+#MISE sources=["config.toml"]
+#MISE outputs=["contribution-stats/*.json"]
+
+USERNAME=$(yq '.username' config.toml)
+YEAR=$(yq '.year' config.toml)
+
+echo "Fetching contributions for $USERNAME: $YEAR"
+
+mkdir -p contribution-stats
+# Using the project https://github.com/matiadev/github-contributions-api
+curl "https://gh-contributions-api.vercel.app/${USERNAME}/${YEAR}" > "contribution-stats/${USERNAME}_${YEAR}.json"
+
