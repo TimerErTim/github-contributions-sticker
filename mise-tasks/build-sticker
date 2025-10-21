@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+#MISE description="Builds the SVG based on the config.toml"
+#MISE sources=["config.toml"]
+#MISE outputs=["out/*"]
+#MISE depends=["fetch-contributions"]
+
+typst c --format svg sticker.typ out/sticker.svg
