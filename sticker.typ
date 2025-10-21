@@ -30,7 +30,7 @@
            y * (side + gap)),
            (x * (side + gap) + side,
            y * (side + gap) + side), 
-           fill: fill-color, stroke: border-color + 1pt, 
+           fill: fill-color, stroke: border-color + 6pt, 
            radius: 10pt)
       }
     }
