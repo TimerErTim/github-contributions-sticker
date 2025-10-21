@@ -45,7 +45,7 @@
   let theme = config.at("theme", default: "dark")
   let fill-color = color-map.at(theme).at(level + 1)
   let border-color = color-map.at(theme).at(0)
-  return color-space(color.mix(fill-color, border-color))
+  return color-space(color.mix(fill-color, border-color).opacify(100%))
 }
 
 #let get-background-color() = {
