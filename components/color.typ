@@ -29,11 +29,15 @@
   "light": rgb("#1f2328"),
 )
 
+#let color-space(color) = {
+  return rgb(color)
+}
+
 #let get-color(level) = {
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = color-map.at(theme).at(level + 1)
-  return cmyk(color)
+  return color-space(color)
 }
 
 #let get-border-color(level) = {
@@ -41,19 +45,20 @@
   let theme = config.at("theme", default: "dark")
   let fill-color = color-map.at(theme).at(level + 1)
   let border-color = color-map.at(theme).at(0)
-  return color.mix(fill-color, border-color, space: cmyk)
+  return color-space(color.mix(fill-color, border-color))
 }
 
 #let get-background-color() = {
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = background-color.at(theme)
-  return cmyk(color)
+  return color-space(color)
 }
 
 #let get-foreground-color() = {
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = foreground-color.at(theme)
-  return cmyk(color)
+  return color-space(color)
 }
+
