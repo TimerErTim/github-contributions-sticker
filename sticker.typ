@@ -66,7 +66,7 @@
 
     let right-size = measure(logo-and-year)
     let right-height = right-size.height
-    let username-width = graph-width - right-size.width - 100pt // margin
+    let username-width = graph-width - right-size.width - 250pt // margin
 
     let username-size = measure([])
     let username-font-size = 0pt
@@ -77,6 +77,8 @@
         #text(weight: "regular", username)
       ]
     }
+
+    
 
     while (username-size.height < right-height) and (username-size.width < username-width) {
       username-font-size += 1pt
