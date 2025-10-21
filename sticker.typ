@@ -2,51 +2,106 @@
 #import "@preview/cetz:0.4.2": *
 #import "components/color.typ": *
 
-#set page(width: 30em, height: 30em, fill: get-background-color())
-
 #let contr = load-contributions()
+#let config = load-config()
+#let username = config.username
+#let year = config.year
 
-#let contr-graph(contr) = {
-  layout((parent) => {
-    let side = calc.min(parent.width / 7, parent.height / contr.at(0).len())
-    let margin = 0.05pt
+#let contr-graph() = {
+  let side = 50pt
+  let gap = 20pt
 
-    canvas({
-      import draw: *
+  canvas({
+    import draw: *
 
-      for y in range(contr.len() - 1, -1, step: -1) {
-        let row = contr.at(y)
-        for x in range(row.len()) {
-          let contr-entry = row.at(x)
-          if contr-entry == none {
-            continue
-          }
-
-          let color = get-color(contr-entry.level)
-          rect((x * (side + margin) + margin, -y * (side + margin) + margin),(x * (side + margin) + side - margin, -y * (side + margin) + side - margin), fill: color, stroke: none, radius: 1pt, inset: 1pt)
+    // Draw graph
+    for y in range(contr.len()) {
+      let row = contr.at(contr.len() - y - 1)
+      for x in range(row.len()) {
+        let contr-entry = row.at(x)
+        if contr-entry == none {
+          continue
         }
+
+        let fill-color = get-color(contr-entry.level)
+        let border-color = get-border-color(contr-entry.level)
+        rect(
+          (x * (side + gap),
+           y * (side + gap)),
+           (x * (side + gap) + side,
+           y * (side + gap) + side), 
+           fill: fill-color, stroke: border-color + 1pt, 
+           radius: 10pt)
       }
-    })
+    }
   })
 }
 
-#contr-graph(contr)
-
-#let render-cell(level) = {
-  let base-color = cmyk(82.48%, 0%, 78.83%, 46.27%);
-  let color = base-color.lighten(level * 2 * 10%);
-  if level == 0 {
-    color = gray;
+#let github-icon() = {
+  let theme = config.theme
+  let size = 500pt
+  let icon = if theme == "dark" {
+    image("components/github-mark-white.svg", width: size)
+  } else {
+    image("components/github-mark.svg", width: size)
   }
-  return box(width: 10pt, height: 10pt, fill: color)[
-
-  ]
+  return icon
 }
 
-#box(height: 100% * 7 / 52, grid(columns: contr.at(0).len(), ..contr.flatten().map(x => {
-  if x == none {
-    []
-  } else {
-    render-cell(x.level)
+#context {
+  let graph = contr-graph()
+  let content = {
+    let graph-size = measure(graph)
+    let graph-width = graph-size.width
+
+    graph
+    v(50pt)
+
+    let logo-and-year = box[
+      #let icon = github-icon()
+      #let icon-size = measure(icon)
+      #box(icon)
+      #box(baseline: -icon-size.height + 100%, text(size: 100pt, weight: "bold", year))
+    ]
+
+    let right-size = measure(logo-and-year)
+    let right-height = right-size.height
+    let username-width = graph-width - right-size.width - 100pt // margin
+
+    let username-size = measure([])
+    let username-font-size = 0pt
+
+    let username-text(size) = {
+      text(size: size, weight: "bold", baseline: -25pt)[
+        //#text(size: size / 1.5, "@", baseline: -size / 3)
+        #text(weight: "regular", username)
+      ]
+    }
+
+    while (username-size.height < right-height) and (username-size.width < username-width) {
+      username-font-size += 1pt
+      username-size = measure(username-text(username-font-size))
+    }
+
+    username-text(username-font-size - 1pt)    
+
+    h(1fr)
+
+    logo-and-year
   }
-})))
+
+  let page-size = measure(content)
+  let page-width = page-size.width
+  let page-height = page-size.height
+  let page-margin = 200pt
+
+  set page(
+    width: page-width + 2 * page-margin, 
+    height: page-height + 2 * page-margin, 
+    margin: page-margin,
+    fill: get-background-color(), 
+  )
+  set text(fill: get-foreground-color(), font: "Segoe UI")
+  
+  content
+}
