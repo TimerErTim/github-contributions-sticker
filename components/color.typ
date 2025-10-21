@@ -33,7 +33,7 @@
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = color-map.at(theme).at(level + 1)
-  return rgb(color)
+  return cmyk(color)
 }
 
 #let get-border-color(level) = {
@@ -41,19 +41,19 @@
   let theme = config.at("theme", default: "dark")
   let fill-color = color-map.at(theme).at(level + 1)
   let border-color = color-map.at(theme).at(0)
-  return color.mix(fill-color, border-color, space: rgb)
+  return color.mix(fill-color, border-color, space: cmyk)
 }
 
 #let get-background-color() = {
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = background-color.at(theme)
-  return color
+  return cmyk(color)
 }
 
 #let get-foreground-color() = {
   let config = load-config()
   let theme = config.at("theme", default: "dark")
   let color = foreground-color.at(theme)
-  return color
+  return cmyk(color)
 }
